@@ -35,6 +35,17 @@ app.use((req, res, next) => {
     next()
 })
 
+// RESPONSE ENVELOPE
+
+function successResponse(res, message, data, status = 200) {
+    return res.status(status).json({
+        success: true,
+        message,
+        data,
+        error: null
+    })
+}
+
 app.listen(port, () => {
     console.log(`App running on port ${port}.`)
 })
