@@ -1,5 +1,5 @@
-import express from 'express'
-import pg from 'pg'
+import express from 'express';
+import pg from 'pg';
 import Joi from 'joi'
 
 const app = express()
@@ -10,7 +10,7 @@ const pool = new Pool({
     user: 'postgres',
     host: 'localhost',
     database: 'mahasiswa',
-    password: '123456789', 
+    password: '123456789',
     port: 5432,
 })
 
@@ -18,7 +18,6 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 // MIDDLEWARE LOGGING
-
 app.use((req, res, next) => {
     const start = Date.now()
 
@@ -29,7 +28,7 @@ app.use((req, res, next) => {
             method: req.method,
             url: req.originalUrl,
             status: res.statusCode,
-            duration: `${duration} ms`,
+            duration: `${duration}ms`,
         })
     })
 
@@ -37,13 +36,12 @@ app.use((req, res, next) => {
 })
 
 // RESPONSE ENVELOPE
-
 function successResponse(res, message, data, status = 200) {
     return res.status(status).json({
         success: true,
         message,
         data,
-        error: null
+        error: null,
     })
 }
 
@@ -57,7 +55,6 @@ function errorResponse(res, message, status, details = null) {
 }
 
 // JOI VALIDATION SCHEMA
-
 const biodataSchema = Joi.object({
     id: Joi.number().integer().positive(),
     nama: Joi.string().trim().min(2).max(100).required(),
@@ -83,7 +80,7 @@ function validateBody(schema) {
                 res,
                 'Validasi input gagal',
                 400,
-                error.details.map((item) => ({
+                error.details.map(item => ({
                     field: item.path.join('.'),
                     message: item.message,
                 }))
@@ -191,7 +188,7 @@ app.delete(
         const { id } = req.params
 
         const result = await pool.query(
-            'DELETE FROM biodata WHERE id = $1 RETURNING *',
+            `DELETE FROM biodata WHERE id = $1 RETURNING *`,
             [id]
         )
 
@@ -210,17 +207,13 @@ app.delete(
 )
 
 // ROUTE TIDAK DITEMUKAN
-
 app.use((req, res) => {
-    return errorResponse(
-        res,
+    res,
         'Endpoint tidak ditemukan',
         404
-    )
 })
 
 // GLOBAL ERROR HANDLER
-
 app.use((err, req, res, next) => {
     console.error(err)
 
